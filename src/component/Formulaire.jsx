@@ -1,37 +1,86 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-function Formulaire({ajouterUtilisateur, data}){
-const [nom, setNom] = useState("");
-const [prenom, setPrenom] = useState("");
-const [edit, setEdit] = useState(data);
+function Formulaire({
+  ajouterUtilisateur,
+  data,
+  sauvegarderModification,
+}) {
+  const [nom, setNom] = useState("");
+  const [prenom, setPrenom] = useState("");
 
-const ajouter = (e) => {
-    e.preventDefault();
-    if(nom.trim() === "" || prenom.trim() === ""){
-        alert("Ampidiro ny soratra");
-        return; 
+  // Rehefa misy utilisateur tiana ovaina
+  useEffect(() => {
+    if (data) {
+      setNom(data.nom);
+      setPrenom(data.prenom);
+    } else {
+      setNom("");
+      setPrenom("");
     }
-    const personne = {id:Date.now(), nom, prenom};
+  }, [data]);
+
+  const ajouter = (e) => {
+    e.preventDefault();
+
+    if (nom.trim() === "" || prenom.trim() === "") {
+      alert("Ampidiro ny soratra");
+      return;
+    }
+
+    const personne = {
+      id: Date.now(),
+      nom: nom,
+      prenom: prenom,
+    };
+
     ajouterUtilisateur(personne);
+
     setNom("");
     setPrenom("");
-}
+  };
 
-const sauvegarde = (edit) => {
-    setUtilisateurs(utilisateurs.map(utilisateur => utilisateur.id === updateId ? {...utilisateur, nom, prenom} : utilisateur));
-    setNom(edit.nom);
-    setPrenom(edit.prenom);
-}
+  const sauvegarde = (e) => {
+    e.preventDefault();
 
-return(
-    <>
-        <form action="" method="post" onSubmit={edit ? sauvegarde : ajouter}>
-            <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} name="" id="" placeholder="Entrer votre nom" /><br/>
-            <input type="text" value={prenom} onChange={(e) => setPrenom(e.target.value)} name="" id="" placeholder="Entrer votre prenom" /><br/>
-            <button type="submit">{edit ? "Sauvegarder" : "Ajouter"}</button>
-        </form>
-    </>
-)
+    if (nom.trim() === "" || prenom.trim() === "") {
+      alert("Ampidiro ny soratra");
+      return;
+    }
+
+    const personneModifiee = {
+      id: data.id,
+      nom: nom,
+      prenom: prenom,
+    };
+
+    sauvegarderModification(personneModifiee);
+  };
+
+  return (
+    <form onSubmit={data ? sauvegarde : ajouter}>
+      <input
+        type="text"
+        value={nom}
+        onChange={(e) => setNom(e.target.value)}
+        placeholder="Entrer votre nom"
+      />
+
+      <br />
+
+      <input
+        type="text"
+        value={prenom}
+        onChange={(e) => setPrenom(e.target.value)}
+        placeholder="Entrer votre prenom"
+      />
+
+      <br />
+
+      <button type="submit">
+        {data ? "Sauvegarder" : "Ajouter"}
+      </button>
+    </form>
+  );
 }
 
 export default Formulaire;
